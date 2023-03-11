@@ -14,21 +14,21 @@ public class TaskService {
     Scanner user = new Scanner(System.in);
     List<Task> archiveTask = new ArrayList<>();
     List<Task> taskList = new ArrayList<>(Arrays.asList(
-            new Task("Кино", "Купить билеты на завтра", TypeDate.ONETIME,
+            new OneTimeTask("Кино", "Купить билеты на завтра", TypeDate.ONETIME,
                     PersonalType.PERSONAL, LocalDateTime.of(2023, 2, 24, 12, 0)),
-            new Task("Ольга", "Поздравить с днём рождения", TypeDate.YEARLY,
+            new YearlyTask("Ольга", "Поздравить с днём рождения", TypeDate.YEARLY,
                     PersonalType.PERSONAL, LocalDateTime.of(2023, 2, 17, 12, 0)),
-            new Task("Финансы", "Оплатить кредит", TypeDate.MONTHLY,
+            new MonthlyTask("Финансы", "Оплатить кредит", TypeDate.MONTHLY,
                     PersonalType.PERSONAL, LocalDateTime.of(2023, 3, 24, 9, 0)),
-            new Task("Учёба", "Постраться сдать курсовую работу", TypeDate.ONETIME,
+            new OneTimeTask("Учёба", "Постраться сдать курсовую работу", TypeDate.ONETIME,
                     PersonalType.WORK, LocalDateTime.of(2023, 3, 9, 23, 59)),
-            new Task("Дежурство", "завести будильник - не проспать ...", TypeDate.WEEKLY,
+            new WeeklyTask("Дежурство", "завести будильник - не проспать ...", TypeDate.WEEKLY,
                     PersonalType.WORK, LocalDateTime.of(2023, 3, 3, 21, 0)),
-            new Task("Праздник", "Завтра Новый Год ;))). Собраться семьёй", TypeDate.YEARLY,
+            new YearlyTask("Праздник", "Завтра Новый Год ;))). Собраться семьёй", TypeDate.YEARLY,
                     PersonalType.PERSONAL, LocalDateTime.of(2023, 12, 30, 23, 59)),
-            new Task("Занятия", "Учиться, учиться и т.д. (Ленин В.И.). 2 часа - не меньше", TypeDate.DAILY,
+            new DailyTask("Занятия", "Учиться, учиться и т.д. (Ленин В.И.). 2 часа - не меньше", TypeDate.DAILY,
                     PersonalType.PERSONAL, LocalDateTime.of(2023, 3, 1, 19, 30)),
-            new Task("Отпуск", "... всё будет хорошою. Взять паспорт", TypeDate.ONETIME,
+            new OneTimeTask("Отпуск", "... всё будет хорошою. Взять паспорт", TypeDate.ONETIME,
                     PersonalType.PERSONAL, LocalDateTime.of(2023, 5, 29, 0, 1))
     ));
 
@@ -241,8 +241,8 @@ public class TaskService {
                 String taskDateTime = user.nextLine();
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy MM dd HH mm");
-                LocalDateTime forNewTask = LocalDateTime.parse(taskDateTime, formatter);
-                taskList.add(new Task(title, description, typeDate, personalType, forNewTask));
+                LocalDateTime dateOfExecutionNewTask = LocalDateTime.parse(taskDateTime, formatter);
+                taskList.add(addTaskDependingTypeDate(title, description, typeDate, personalType, dateOfExecutionNewTask));
 
                 dateSet = false;
             } catch (DateTimeParseException e) {
@@ -280,9 +280,29 @@ public class TaskService {
         }
     }
 
+    public Task addTaskDependingTypeDate(String title,
+                                         String description,
+                                         TypeDate typeDate,
+                                         PersonalType personalType,
+                                         LocalDateTime dateOfExecutionNewTask) {
+        switch (typeDate) {
+            case ONETIME:
+                return new OneTimeTask(title, description, typeDate, personalType, dateOfExecutionNewTask);
+            case DAILY:
+                return new DailyTask(title, description, typeDate, personalType, dateOfExecutionNewTask);
+            case WEEKLY:
+                return new WeeklyTask(title, description, typeDate, personalType, dateOfExecutionNewTask);
+            case MONTHLY:
+                return new MonthlyTask(title, description, typeDate, personalType, dateOfExecutionNewTask);
+            case YEARLY:
+                return new YearlyTask(title, description, typeDate, personalType, dateOfExecutionNewTask);
+        }
+        return null;
+    }
+
     public void burningBook() {
         taskList.clear();
         archiveTask.clear();
-        System.out.println("\n\t\t\t\t\t\tв начале был код...");
+        System.err.println("\n\t\t\t\t\t\tживи в моменте...");
     }
 }

@@ -1,6 +1,5 @@
 import exception.TaskNotFoundException;
 import task.TaskService;
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -140,7 +139,6 @@ public class Menu {
                 taskService.burningBook();
                 exit = false;
             }
-
         } while (exit);
     }
 }
