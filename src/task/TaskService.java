@@ -2,7 +2,6 @@ package task;
 
 import exception.IncorrectArgumentException;
 import exception.TaskNotFoundException;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,7 +18,7 @@ public class TaskService {
             new YearlyTask("Ольга", "Поздравить с днём рождения", TypeDate.YEARLY,
                     PersonalType.PERSONAL, LocalDateTime.of(2023, 2, 17, 12, 0)),
             new MonthlyTask("Финансы", "Оплатить кредит", TypeDate.MONTHLY,
-                    PersonalType.PERSONAL, LocalDateTime.of(2023, 3, 24, 9, 0)),
+                    PersonalType.PERSONAL, LocalDateTime.of(2023, 2, 24, 9, 0)),
             new OneTimeTask("Учёба", "Постраться сдать курсовую работу", TypeDate.ONETIME,
                     PersonalType.WORK, LocalDateTime.of(2023, 3, 9, 23, 59)),
             new WeeklyTask("Дежурство", "завести будильник - не проспать ...", TypeDate.WEEKLY,
@@ -77,34 +76,20 @@ public class TaskService {
             throw new TaskNotFoundException("выкинь блокнот - он пуст. Или....");
         }
         for (Task task : taskList) {
-            if (task.getType().equals(TypeDate.ONETIME) && task.getDateTime().compareTo(LocalDateTime.now()) < 0) {
+                if (task.getType().equals(TypeDate.ONETIME) && task.appearsIn(task.getDateTime())) {
                 idList.add(task.getId());
             } else {
                 do {
-                    if (task.getDateTime().compareTo(LocalDateTime.now()) < 0) {
-                        task.setDateTime(checkDate(task.getType(), task.getDateTime()));
+                    if (task.appearsIn(task.getDateTime())) {
+                        task.setDateTime(task.setNewDateTime(task.getDateTime()));
                     }
-                } while (task.getDateTime().compareTo(LocalDateTime.now()) < 0);
+                } while (task.appearsIn(task.getDateTime()));
             }
         }
         for (int i = 0; i < idList.size(); i++) {
             deletingTask(idList.get(i) - i);
         }
         idList.clear();
-    }
-
-    public LocalDateTime checkDate(TypeDate typeDate, LocalDateTime dateTime) {
-        switch (typeDate) {
-            case DAILY:
-                return dateTime.plusDays(1);
-            case WEEKLY:
-                return dateTime.plusWeeks(1);
-            case MONTHLY:
-                return dateTime.plusMonths(1);
-            case YEARLY:
-                return dateTime.plusYears(1);
-        }
-        return null;
     }
 
     public void taskOnNextDay() {

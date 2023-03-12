@@ -70,6 +70,14 @@ public abstract class Task {
         this.id = id;
     }
 
+    public boolean appearsIn(LocalDateTime time) {
+        return time.compareTo(LocalDateTime.now()) < 0;
+    }
+
+    public LocalDateTime setNewDateTime(LocalDateTime time) {
+        return time;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
